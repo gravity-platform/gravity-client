@@ -37,7 +37,7 @@ const STATE_KEY = "gravity_oauth_state";
  * Create an OAuth client instance
  */
 export function createOAuthClient(config: OAuthConfig) {
-  const redirectUri = config.redirectUri || window.location.origin;
+  const redirectUri = config.redirectUri || (typeof window !== "undefined" ? window.location.origin : "");
   const scope = config.scope || "openid profile email";
 
   let authorizationServer: oauth.AuthorizationServer | null = null;
@@ -156,7 +156,7 @@ export function createOAuthClient(config: OAuthConfig) {
       oauth.None(),
       callbackParams,
       redirectUri,
-      codeVerifier
+      codeVerifier,
     );
 
     let result: oauth.TokenEndpointResponse;
@@ -223,7 +223,7 @@ export function createOAuthClient(config: OAuthConfig) {
     }
 
     const namespacedKey = Object.keys(profile).find(
-      (key) => key.endsWith(`/${claimName}`) || key.endsWith(`/claims/${claimName}`)
+      (key) => key.endsWith(`/${claimName}`) || key.endsWith(`/claims/${claimName}`),
     );
 
     if (namespacedKey && Array.isArray(profile[namespacedKey])) {

@@ -34,6 +34,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "link": "npm run build && npm link",
     "typecheck": "tsc --noEmit"
