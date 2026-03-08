@@ -62,12 +62,17 @@ export class ShadowDOMWrapper extends React.Component<ShadowDOMWrapperProps, Sha
   }
 
   componentWillUnmount(): void {
-    if (this.reactRoot) {
-      try {
-        this.reactRoot.unmount();
-      } catch (err) {
-        console.error("[ShadowDOM] Failed to unmount:", err);
-      }
+    // Defer unmount to avoid "synchronously unmount a root while React
+    // was already rendering" warning in React 18 strict mode
+    const root = this.reactRoot;
+    if (root) {
+      setTimeout(() => {
+        try {
+          root.unmount();
+        } catch (err) {
+          // Ignore - root may already be unmounted
+        }
+      }, 0);
       this.reactRoot = null;
     }
     // Reset shadowRoot so re-mount (React 18 strict mode) recreates it
