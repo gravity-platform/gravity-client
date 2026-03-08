@@ -68,13 +68,29 @@ export class ShadowDOMWrapper extends React.Component<ShadowDOMWrapperProps, Sha
       } catch (err) {
         console.error("[ShadowDOM] Failed to unmount:", err);
       }
+      this.reactRoot = null;
     }
+    // Reset shadowRoot so re-mount (React 18 strict mode) recreates it
+    this.shadowRoot = null;
   }
 
   setupShadowDOM(): void {
     if (!this.containerRef.current || this.shadowRoot) return;
 
     try {
+      // React 18 strict mode: the DOM element may already have a shadow root
+      // from the first mount cycle. Reuse it instead of calling attachShadow again.
+      const existing = this.containerRef.current.shadowRoot;
+      if (existing) {
+        this.shadowRoot = existing;
+        // Reuse existing container, just create a new React root
+        const reactContainer = this.shadowRoot.querySelector(".gravity-component") as HTMLElement;
+        if (reactContainer) {
+          this.reactRoot = createRoot(reactContainer);
+          return;
+        }
+      }
+
       this.shadowRoot = this.containerRef.current.attachShadow({ mode: "open" });
 
       // Create container for React inside Shadow DOM
