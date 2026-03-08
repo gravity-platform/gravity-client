@@ -1,6 +1,6 @@
 {
   "name": "@gravity-platform/gravity-client",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "React SDK for Gravity AI - The experience layer for AI",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

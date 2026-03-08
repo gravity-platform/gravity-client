@@ -1,3 +1,5 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import { useState, useCallback } from "react";
 
 interface UseComponentLoaderReturn {
@@ -100,6 +102,11 @@ export function useComponentLoader(apiUrl: string): UseComponentLoaderReturn {
             reject(new Error(error));
           };
 
+          // Ensure React/ReactDOM are on window for UMD bundles
+          // Bundlers like webpack (Next.js) don't expose them globally
+          if (!(window as any).React) (window as any).React = React;
+          if (!(window as any).ReactDOM) (window as any).ReactDOM = ReactDOM;
+
           document.head.appendChild(script);
         });
       } catch (error) {
@@ -112,7 +119,7 @@ export function useComponentLoader(apiUrl: string): UseComponentLoaderReturn {
         return null;
       }
     },
-    [apiUrl, componentCache, loadingComponents]
+    [apiUrl, componentCache, loadingComponents],
   );
 
   return {
