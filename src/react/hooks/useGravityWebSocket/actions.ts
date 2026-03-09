@@ -55,6 +55,7 @@ export async function sendMessageViaREST(options: SendMessageOptions): Promise<v
           userId: data.userId || userId,
           providerId: data.providerId || "gravity-ds",
           metadata: {
+            ...(data.metadata || {}),
             targetTriggerNode: data.targetTriggerNode,
             enableAudio: data.enableAudio || false,
             ...(data.componentState && { componentState: data.componentState }),
@@ -104,7 +105,7 @@ export function sendLoadTemplateMessage(
   ws: WebSocket | null,
   workflowId: string,
   targetTriggerNode: string,
-  chatId?: string
+  chatId?: string,
 ): void {
   if (ws?.readyState === WebSocket.OPEN) {
     ws.send(
@@ -113,7 +114,7 @@ export function sendLoadTemplateMessage(
         workflowId,
         targetTriggerNode,
         chatId,
-      })
+      }),
     );
   }
 }
@@ -146,7 +147,7 @@ export interface VoiceCallMessageData {
  * This sends START_CALL or END_CALL messages to initiate/terminate voice sessions.
  */
 export async function sendVoiceCallMessage(
-  options: Omit<SendMessageOptions, "data"> & { data: VoiceCallMessageData }
+  options: Omit<SendMessageOptions, "data"> & { data: VoiceCallMessageData },
 ): Promise<void> {
   const { data, getAccessToken, apiUrl, setWorkflowState } = options;
 
