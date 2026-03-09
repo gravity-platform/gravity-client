@@ -26,7 +26,7 @@ interface ClientContext {
   /** Send a message to the workflow - handles history + server communication */
   sendMessage: (
     message: string,
-    options?: { targetTriggerNode?: string; chatId?: string; payload?: Record<string, unknown> },
+    options?: { targetTriggerNode?: string; chatId?: string; metadata?: Record<string, any> },
   ) => void;
   /** Load a template without sending a message (template switch only) */
   loadTemplate: (targetTriggerNode: string, options?: { chatId?: string }) => void;
@@ -230,7 +230,12 @@ export function GravityClient({
   const sendMessage = useCallback(
     async (
       message: string,
-      options?: { targetTriggerNode?: string; chatId?: string; payload?: Record<string, unknown> },
+      options?: {
+        targetTriggerNode?: string;
+        chatId?: string;
+        payload?: Record<string, unknown>;
+        metadata?: Record<string, any>;
+      },
     ) => {
       // Read current values from refs (not stale closures)
       const currentFocusState = focusStateRef.current;
@@ -286,7 +291,7 @@ export function GravityClient({
         chatId: effectiveChatId || userEntry.chatId,
         workflowId: session.workflowId,
         targetTriggerNode: effectiveTargetTriggerNode,
-        ...(options?.payload && { payload: options.payload }),
+        ...(options?.metadata && { metadata: options.metadata }),
       });
     },
     [historyManager, sendUserAction, session.workflowId, currentTargetTriggerNode, config.apiUrl],

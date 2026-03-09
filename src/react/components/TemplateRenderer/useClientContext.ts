@@ -86,7 +86,7 @@ export function useClientContext({
   // Focus Mode: When focused, route to focusState.targetTriggerNode with focusState.chatId
   // Uses ref for focusState to keep callback stable
   const sendMessage = useCallback(
-    (message: string, options?: { targetTriggerNode?: string; chatId?: string }) => {
+    (message: string, options?: { targetTriggerNode?: string; chatId?: string; metadata?: Record<string, any> }) => {
       // Clear suggestions when user sends a new message
       clearSuggestions();
 
@@ -112,9 +112,10 @@ export function useClientContext({
         chatId: effectiveChatId || userEntry.chatId,
         workflowId: sessionParams.workflowId,
         targetTriggerNode: effectiveTargetTriggerNode,
+        ...(options?.metadata && { metadata: options.metadata }),
       });
     },
-    [historyManager, sendUserAction, sessionParams, clearSuggestions]
+    [historyManager, sendUserAction, sessionParams, clearSuggestions],
   );
 
   // Helper to emit action (for cross-boundary communication from templates)
@@ -122,7 +123,7 @@ export function useClientContext({
     window.dispatchEvent(
       new CustomEvent("gravity:action", {
         detail: { type, data, componentId: "template" },
-      })
+      }),
     );
   }, []);
 
@@ -138,7 +139,7 @@ export function useClientContext({
       entries: history,
       getResponses: historyManager.getResponses.bind(historyManager),
     }),
-    [history, historyManager]
+    [history, historyManager],
   );
 
   // Actions context - stable functions for sending messages
@@ -149,7 +150,7 @@ export function useClientContext({
       sendVoiceCallMessage,
       emitAction,
     }),
-    [sendMessage, sendAgentMessage, sendVoiceCallMessage, emitAction]
+    [sendMessage, sendAgentMessage, sendVoiceCallMessage, emitAction],
   );
 
   // Build client context for template
