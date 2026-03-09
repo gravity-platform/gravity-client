@@ -24,7 +24,10 @@ interface FocusState {
 
 interface ClientContext {
   /** Send a message to the workflow - handles history + server communication */
-  sendMessage: (message: string, options?: { targetTriggerNode?: string; chatId?: string }) => void;
+  sendMessage: (
+    message: string,
+    options?: { targetTriggerNode?: string; chatId?: string; payload?: Record<string, unknown> },
+  ) => void;
   /** Load a template without sending a message (template switch only) */
   loadTemplate: (targetTriggerNode: string, options?: { chatId?: string }) => void;
   /** Send an agent message through server pipeline (for live agent, Amazon Connect, etc.) */
@@ -225,7 +228,10 @@ export function GravityClient({
   // FOCUS MODE 2.0: When focusedComponentId is set, send directly to the focused node
   // via /signal. Any node can receive signals - it's just a state machine event.
   const sendMessage = useCallback(
-    async (message: string, options?: { targetTriggerNode?: string; chatId?: string }) => {
+    async (
+      message: string,
+      options?: { targetTriggerNode?: string; chatId?: string; payload?: Record<string, unknown> },
+    ) => {
       // Read current values from refs (not stale closures)
       const currentFocusState = focusStateRef.current;
       const currentWorkflowRunId = workflowRunIdRef.current;
@@ -280,6 +286,7 @@ export function GravityClient({
         chatId: effectiveChatId || userEntry.chatId,
         workflowId: session.workflowId,
         targetTriggerNode: effectiveTargetTriggerNode,
+        ...(options?.payload && { payload: options.payload }),
       });
     },
     [historyManager, sendUserAction, session.workflowId, currentTargetTriggerNode, config.apiUrl],

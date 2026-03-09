@@ -54,6 +54,7 @@ export async function sendMessageViaREST(options: SendMessageOptions): Promise<v
           conversationId: data.conversationId || conversationId,
           userId: data.userId || userId,
           providerId: data.providerId || "gravity-ds",
+          ...(data.payload && { payload: data.payload }),
           metadata: {
             ...(data.metadata || {}),
             targetTriggerNode: data.targetTriggerNode,
