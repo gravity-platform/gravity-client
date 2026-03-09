@@ -25,8 +25,6 @@ interface SendMessageOptions {
 export async function sendMessageViaREST(options: SendMessageOptions): Promise<void> {
   const { data, getAccessToken, apiUrl, conversationId, userId, setWorkflowState } = options;
 
-  console.log("[REST] 📬 sendMessageViaREST data.metadata:", JSON.stringify(data.metadata), "keys:", Object.keys(data));
-
   // Optimistically set workflow state
   setWorkflowState("WORKFLOW_STARTED", data.workflowId, null);
 
