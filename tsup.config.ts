@@ -8,7 +8,7 @@ export default defineConfig({
     "realtime/index": "src/realtime/index.ts",
   },
   format: ["cjs", "esm"],
-  dts: false,
+  dts: { compilerOptions: { skipLibCheck: true } },
   splitting: false,
   sourcemap: true,
   clean: !process.argv.includes("--watch"), // Don't clean in watch mode to avoid race conditions

@@ -14,7 +14,7 @@ interface ShadowDOMWrapperState {}
  * ShadowDOMWrapper - Renders components inside Shadow DOM for CSS isolation
  */
 export class ShadowDOMWrapper extends React.Component<ShadowDOMWrapperProps, ShadowDOMWrapperState> {
-  private containerRef: React.RefObject<HTMLDivElement>;
+  private containerRef: React.RefObject<HTMLDivElement | null>;
   private shadowRoot: ShadowRoot | null = null;
   private reactRoot: Root | null = null;
 
