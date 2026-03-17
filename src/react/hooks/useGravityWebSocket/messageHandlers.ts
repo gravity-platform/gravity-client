@@ -48,6 +48,10 @@ export function handleServerMessage(data: ServerMessage, ws: WebSocket, ctx: Mes
       handleSuggestionsUpdate(data as SuggestionsUpdateMessage);
       break;
 
+    case "OBJECT_DATA":
+      handleObjectData(data as any, ctx);
+      break;
+
     case "AI_ASSIST_RESULT":
       handleAIAssistResult(data as any, ctx);
       break;
@@ -168,6 +172,15 @@ function handleAudioState(msg: any, ctx: MessageHandlerContext): void {
 
   // Emit as event so templates can react
   ctx.setEvents((prev) => [...prev, { ...msg, id: `audioState_${msg.state}_${Date.now()}` }]);
+}
+
+/**
+ * Object data - write directly to Zustand, no component loader involved
+ */
+function handleObjectData(msg: any, ctx: MessageHandlerContext): void {
+  const { updateComponentData } = useAIContext.getState();
+  const key = `${msg.chatId}_${msg.nodeId}`;
+  updateComponentData(key, msg.data);
 }
 
 /**
